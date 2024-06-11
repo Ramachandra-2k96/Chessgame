@@ -122,7 +122,18 @@ button:hover {
 .notification {
     transition: opacity 0.3s ease;
 }
-
+button{
+    top: 12px;
+    padding: 16px;
+    height: 8vh;
+    width: 16vh;
+    border-radius: 5px;
+    background-color: #45a049;
+}
+.buttons{
+    width: 40%;
+    height: inherit;
+}
 .full {
     transition: opacity 0.3s ease;
 }

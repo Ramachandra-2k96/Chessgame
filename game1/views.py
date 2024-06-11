@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 import pandas as pd
 from .models import ChessMoves
+from django.views.decorators.csrf import csrf_exempt
 
 def home_nope(request):
     try:
@@ -107,7 +108,15 @@ def parse_moves(moves_str):
 def home(request):
     return render(request,'game1/index.html')
 
+@csrf_exempt
 def getdata(request):
-    random_move = ChessMoves.objects.order_by('?').first()
-    print(random_move.move)
-    return JsonResponse(random_move.move,safe=False)
+    selected_value = request.POST.get('option')
+    if selected_value:
+        random_move = ChessMoves.objects.filter(Mode=selected_value).order_by('?').first()
+        if random_move:
+            return JsonResponse({'move': random_move.move,'end':random_move.Termination_Type})
+        else:
+            return JsonResponse({'error': 'No chess move found for the selected value.'}, status=404)
+    else:
+        return JsonResponse({'error': 'No option provided.'}, status=400)
+

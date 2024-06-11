@@ -83,45 +83,60 @@ function executeMoves() {
     document.querySelector('.notification').style.display = 'none';
     document.querySelector('.full').style.display = 'none';
 }
+let timeoutID; // Declare a variable to hold the timeout ID
 
-function chess_alerts(move)
-{
-    if (move.check) {
-        const full = document.querySelector('.full');
-        const notification = document.querySelector('.notification');
-        notification.innerHTML = '<p>Check!</p>';
-        full.style.display = 'block';
-        notification.style.display = 'block';
-        
-        // Highlight previous step
-        const pieceGivingCheckCoords = getCoords(move.from);
-        const pieceGivingCheckElem = document.getElementById(String.fromCharCode(97 + pieceGivingCheckCoords[1]) + (8 - pieceGivingCheckCoords[0]));
-        pieceGivingCheckElem.classList.add('highlight-check');
-    
-        // Highlight next step
-        const kingUnderCheckCoords = getCoords(move.to);
-        const kingUnderCheckElem = document.getElementById(String.fromCharCode(97 + kingUnderCheckCoords[1]) + (8 - kingUnderCheckCoords[0]));
-        kingUnderCheckElem.classList.add('highlight-check', 'highlight-king');
-    
-        // Highlight real king position under check
+function chess_alerts(move) {
+   // Declare variables outside the conditional block
+let kingUnderCheckRealElem;
+let timeoutID;
+let lastMovedPieceColor;
+let lastMovedPiece;
+if (move.check) {
+    const full = document.querySelector('.full');
+    const notification = document.querySelector('.notification');
+    notification.innerHTML = '<p>Check!</p>';
+    full.style.display = 'block';
+    notification.style.display = 'block';
+
+    // Highlight previous step
+    const pieceGivingCheckCoords = getCoords(move.from);
+    const pieceGivingCheckElem = document.getElementById(String.fromCharCode(97 + pieceGivingCheckCoords[1]) + (8 - pieceGivingCheckCoords[0]));
+    pieceGivingCheckElem.classList.add('highlight-check');
+
+    // Highlight next step
+    const kingUnderCheckCoords = getCoords(move.to);
+    const kingUnderCheckElem = document.getElementById(String.fromCharCode(97 + kingUnderCheckCoords[1]) + (8 - kingUnderCheckCoords[0]));
+    kingUnderCheckElem.classList.add('highlight-check', 'highlight-king');
+
+    // Highlight real king position under check if available
+    if (move.enemy_king_position) {
         const kingUnderCheckCoordsReal = getCoords(move.enemy_king_position);
-        const kingUnderCheckRealElem = document.getElementById(String.fromCharCode(97 + kingUnderCheckCoordsReal[1]) + (8 - kingUnderCheckCoordsReal[0]));
+        kingUnderCheckRealElem = document.getElementById(String.fromCharCode(97 + kingUnderCheckCoordsReal[1]) + (8 - kingUnderCheckCoordsReal[0]));
         kingUnderCheckRealElem.classList.add('highlight-king');
-    
-        setTimeout(() => {
-            notification.style.display = 'none';
-            full.style.display = 'none';
-    
-            // Remove highlight classes
-            pieceGivingCheckElem.classList.remove('highlight-check');
-            kingUnderCheckElem.classList.remove('highlight-check', 'highlight-king');
-            kingUnderCheckRealElem.classList.remove('highlight-king');
-        }, 2000);
-    } else {
-        document.querySelector('.notification').style.display = 'none';
-        document.querySelector('.full').style.display = 'none';
     }
-}    
+
+    // Clear previous timeout if it exists
+    if (timeoutID) {
+        clearTimeout(timeoutID);
+    }
+
+    // Set new timeout and store its ID
+    timeoutID = setTimeout(() => {
+        // Hide notification and full div
+        notification.style.display = 'none';
+        full.style.display = 'none';
+        // Remove highlight classes
+        pieceGivingCheckElem.classList.remove('highlight-check');
+        kingUnderCheckElem.classList.remove('highlight-check', 'highlight-king');
+        if (kingUnderCheckRealElem) {
+            kingUnderCheckRealElem.classList.remove('highlight-king');
+        }
+    }, 2000);
+} else {
+    document.querySelector('.notification').style.display = 'none';
+    document.querySelector('.full').style.display = 'none';
+}
+}
 
 function makeMove(move) {
     const fromCoords = getCoords(move.from);
@@ -150,6 +165,20 @@ function nextMove() {
         applyMove(moves[currentMoveIndex]);
         chess_alerts(moves[currentMoveIndex])
         drawBoard(boardStates[currentMoveIndex + 1]);
+    }else {
+        const full = document.querySelector('.full');
+        const notification = document.querySelector('.notification');
+        console.log()
+        notification.innerHTML = '<p>'+"Termination :"+ termination+'<br/>'+lastMovedPieceColor+' Wins</p>';
+        full.style.display = 'block';
+        notification.style.display = 'block';
+    if (timeoutID) {
+        clearTimeout(timeoutID);
+    }
+    timeoutID = setTimeout(() => {
+        notification.style.display = 'none';
+        full.style.display = 'none';    
+    }, 2000);
     }
 }
 
@@ -160,6 +189,8 @@ function applyMove(move) {
     board[toCoords[0]][toCoords[1]] = board[fromCoords[0]][fromCoords[1]];
     board[fromCoords[0]][fromCoords[1]] = '';
     boardStates.push(board);
+    lastMovedPiece = board[fromCoords[0]][fromCoords[1]]; // Store the last moved piece
+    lastMovedPieceColor = (lastMovedPiece===lastMovedPiece.toUpperCase()) ? 'white' : 'black'; 
 }
 
 function getCoords(square) {

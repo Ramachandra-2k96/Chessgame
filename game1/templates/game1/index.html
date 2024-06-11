@@ -8,14 +8,25 @@
     <title>Django Project</title>
     <link rel="stylesheet" href="{% static 'game1/css/style.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
+    <div class="flex justify-center items-center p-3">
+        <div class="w-64">
+            <select id="mySelect" class="block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="" disabled selected>Select an option</option>
+                <option value="Classical">Classical</option>
+                <option value="Blitz">Blitz</option>
+                <option value="Bullet">Bullet</option>                
+                <option value="Correspondence">Correspondence</option>
+            </select>
+        </div>
+    </div>
     <div id="chessboard"></div>
-    <div class="buttons">
-        <button id="prevButton">Prev</button>
-        <button id="nextButton">Next</button>
-        <button id="startButton">Execute Moves</button>
+    <div class="buttons space-x-2 p-6">
+        <button id="prevButton" class="bg-green-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Prev</button>
+        <button id="nextButton" class="bg-green-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Next</button>
+        <button id="startButton" class="bg-green-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Execute Moves</button>
     </div>
     <div class="full"><div class="notification"></div></div>
     <script src="{% static 'game1/js/script.js' %}"></script>
@@ -26,15 +37,22 @@
     { from: 'g1', to: 'f3' },
     { from: 'b8', to: 'c6' }
 ];
-        $(document).ready(function() {
-            $.ajax({
-                url: '/game1/moves_data',
-                method: 'GET',
-                success: function(data) {
-                    moves=data;
-                }
-            });
-        });
+$('#mySelect').on('change', function() {
+    const selectedValue = $(this).val();
+    $.ajax({
+        url: '/game1/moves_data',
+        method: 'POST',
+        data: { option: selectedValue },
+        success: function(response) {
+            moves=response.move;
+            termination=response.end;
+        },
+        error: function(error) {
+            console.log('Error:', error);
+            // Handle the error here
+        }
+    });
+});
     </script>
 </body>
 </html>

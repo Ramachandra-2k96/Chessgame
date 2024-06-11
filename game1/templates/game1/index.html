@@ -1,0 +1,40 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Project</title>
+    <link rel="stylesheet" href="{% static 'game1/css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</head>
+<body>
+    <div id="chessboard"></div>
+    <div class="buttons">
+        <button id="prevButton">Prev</button>
+        <button id="nextButton">Next</button>
+        <button id="startButton">Execute Moves</button>
+    </div>
+    <div class="full"><div class="notification"></div></div>
+    <script src="{% static 'game1/js/script.js' %}"></script>
+    <script>
+        var moves = [
+    { from: 'e2', to: 'e4' },
+    { from: 'e7', to: 'e5' },
+    { from: 'g1', to: 'f3' },
+    { from: 'b8', to: 'c6' }
+];
+        $(document).ready(function() {
+            $.ajax({
+                url: '/game1/moves_data',
+                method: 'GET',
+                success: function(data) {
+                    moves=data;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

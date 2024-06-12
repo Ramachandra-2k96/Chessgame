@@ -145,8 +145,13 @@ function makeMove(move) {
     board[toCoords[0]][toCoords[1]] = board[fromCoords[0]][fromCoords[1]];
     board[fromCoords[0]][fromCoords[1]] = '';
     boardStates.push(board);
+    const grid = document.getElementById("moveListGrid");
+    const moveElement = document.createElement("div");
+    moveElement.textContent = move.to;
+    moveElement.classList.add("h-16", "w-28", "text-center", "bg-white", "rounded-md", "shadow-md", "flex", "items-center", "justify-center");
+    grid.appendChild(moveElement);
     drawBoard(board);
-    chess_alerts(move)
+    chess_alerts(move);
 }
 
 function prevMove() {
@@ -191,6 +196,11 @@ function applyMove(move) {
     boardStates.push(board);
     lastMovedPiece = board[fromCoords[0]][fromCoords[1]]; // Store the last moved piece
     lastMovedPieceColor = (lastMovedPiece===lastMovedPiece.toUpperCase()) ? 'white' : 'black'; 
+    const grid = document.getElementById("moveListGrid");
+    const moveElement = document.createElement("div");
+    moveElement.textContent = move.to;
+    moveElement.classList.add("h-16", "w-28", "text-center", "bg-white", "rounded-md", "shadow-md", "flex", "items-center", "justify-center");
+    grid.appendChild(moveElement);
 }
 
 function getCoords(square) {

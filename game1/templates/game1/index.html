@@ -29,6 +29,15 @@
         <button id="startButton" class="bg-green-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Execute Moves</button>
     </div>
     <div class="full"><div class="notification"></div></div>
+    <div id="moveList" class="mt-4 bg-gray-100 p-4 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold mb-2">Move List</h2>
+        <div class="overflow-x-auto h-28">
+            <div class="grid grid-cols-5 gap-4" id="moveListGrid">
+
+            </div>
+        </div>
+    </div>
+    
     <script src="{% static 'game1/js/script.js' %}"></script>
     <script>
         var moves = [
@@ -40,7 +49,7 @@
 $('#mySelect').on('change', function() {
     const selectedValue = $(this).val();
     $.ajax({
-        url: '/game1/moves_data',
+        url: '/moves_data',
         method: 'POST',
         data: { option: selectedValue },
         success: function(response) {
